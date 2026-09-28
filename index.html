@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>팩맨</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+  html, body {
+    width:100%; height:100%; overflow:hidden;
+    background:#000;
+    font-family:-apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color:#fff;
+    touch-action:none;
+  }
+  #stage {
+    width:100%; height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:8px;
+  }
+  #hud {
+    display:flex; justify-content:space-between; align-items:flex-end; gap:8px;
+    padding:0 4px 6px;
+    font-variant-numeric:tabular-nums;
+  }
+  #hud .item { display:flex; flex-direction:column; line-height:1.1; }
+  #hud .item.mid { align-items:center; }
+  #hud .item.right { align-items:flex-end; }
+  #hud .label { font-size:10px; letter-spacing:.12em; color:#8f8fff; font-weight:700; }
+  #hud .value { font-size:20px; font-weight:800; }
+  #hud .icons { display:flex; gap:6px; }
+  #hud button {
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff;
+    width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer;
+  }
+  #wrap { position:relative; }
+  #game { display:block; touch-action:none; }
+  #overlay {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    text-align:center; padding:20px;
+    background:rgba(0,0,0,.78);
+    border-radius:10px;
+  }
+  #overlay.hidden { display:none; }
+  #overlay h1 { font-size:40px; font-weight:900; letter-spacing:.04em; color:#ffe600;
+    text-shadow:0 3px 0 #b36b00, 0 0 18px rgba(255,230,0,.4); }
+  #overlay h2 { font-size:26px; font-weight:900; }
+  #overlay p { font-size:14px; color:#d8d8ff; line-height:1.6; }
+  #overlay .big { font-size:18px; font-weight:800; color:#ffe600; }
+  #overlay .help { font-size:12px; color:#8f8fff; line-height:1.7; margin-top:4px; }
+  #overlay button {
+    margin-top:8px;
+    background:linear-gradient(180deg,#fff27a,#ffcc00);
+    color:#3a2400; font-weight:900; font-size:17px;
+    border:none; border-radius:999px; padding:12px 34px;
+    box-shadow:0 4px 0 #a36b00; cursor:pointer;
+  }
+  #overlay button:active { transform:translateY(3px); box-shadow:0 1px 0 #a36b00; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="col">
+    <div id="hud">
+      <div class="item"><span class="label">SCORE</span><span class="value" id="score">0</span></div>
+      <div class="item mid"><span class="label">LEVEL</span><span class="value" id="levelNo">1</span></div>
+      <div class="item right"><span class="label">BEST</span><span class="value" id="best">0</span></div>
+      <div class="icons">
+        <button id="muteBtn" title="소리 (M)">🔊</button>
+        <button id="pauseBtn" title="일시정지 (P)">⏸</button>
+      </div>
+    </div>
+    <div id="wrap">
+      <canvas id="game"></canvas>
+      <div id="overlay">
+        <h1>PAC-MAN</h1>
+        <p>미로의 점을 모두 먹으면 다음 레벨!<br>큰 점을 먹으면 잠시 유령을 잡아먹을 수 있어요 👻</p>
+        <div class="help">
+          ⌨️ 방향키 / WASD 로 이동<br>
+          📱 화면을 밀어서(스와이프) 방향 전환<br>
+          P 일시정지 · M 소리
+        </div>
+        <button id="startBtn">시작하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
