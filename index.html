@@ -31,13 +31,16 @@
   #hud .item { display:flex; flex-direction:column; line-height:1.1; }
   #hud .item.mid { align-items:center; }
   #hud .item.right { align-items:flex-end; }
-  #hud .label { font-size:10px; letter-spacing:.12em; color:#8f8fff; font-weight:700; }
+  #hud .label { font-size:11px; letter-spacing:.12em; color:#8f8fff; font-weight:700; }
   #hud .value { font-size:20px; font-weight:800; }
   #hud .icons { display:flex; gap:6px; }
   #hud button {
     background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff;
-    width:30px; height:30px; border-radius:8px; font-size:14px; cursor:pointer;
+    width:34px; height:34px; border-radius:8px; font-size:15px; cursor:pointer;
   }
+  /* 버튼 모양은 작아도 누르는 범위는 손가락 크기(44px 남짓)로 넓힌다 */
+  #hud button { position:relative; }
+  #hud button::after { content:''; position:absolute; inset:-7px -4px; }
   #wrap { position:relative; }
   #game { display:block; touch-action:none; }
   #overlay {
