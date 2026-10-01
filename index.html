@@ -65,6 +65,9 @@
     box-shadow:0 4px 0 #a36b00; cursor:pointer;
   }
   #overlay button:active { transform:translateY(3px); box-shadow:0 1px 0 #a36b00; }
+  /* 기기에 맞는 설명만: 폰(손가락)은 .touch, PC(마우스·키보드)는 .pc */
+  .pc { display:none; }
+  @media (pointer:fine) { .pc { display:inline; } .touch { display:none; } }
 </style>
 </head>
 <body>
@@ -85,9 +88,8 @@
         <h1>PAC-MAN</h1>
         <p>미로의 점을 모두 먹으면 다음 레벨!<br>큰 점을 먹으면 잠시 유령을 잡아먹을 수 있어요 👻</p>
         <div class="help">
-          ⌨️ 방향키 / WASD 로 이동<br>
-          📱 화면을 밀어서(스와이프) 방향 전환<br>
-          P 일시정지 · M 소리
+          <span class="pc">⌨️ 방향키 / WASD 로 이동<br>P 일시정지 · M 소리</span>
+          <span class="touch">👆 화면을 밀어서(스와이프) 방향 전환</span>
         </div>
         <button id="startBtn">시작하기</button>
       </div>
