@@ -82,7 +82,7 @@ function fit() {
   const hudH = 52;
   const scale = Math.min((innerWidth - 16) / W, (innerHeight - 16 - hudH) / H);
   const cssW = Math.floor(W * scale), cssH = Math.floor(H * scale);
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
   canvas.width = Math.round(cssW * dpr);
