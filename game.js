@@ -1,4 +1,12 @@
 'use strict';
+// 오락실 튜토리얼이 '진짜로 일어난 일'을 알아채는 신호 (arcade/public/tutorial.js 가 듣는다. 튜토리얼이 아니면 아무도 안 듣는다)
+const tutorialSignal = (type) => window.dispatchEvent(new CustomEvent('arcade:tutorial', { detail: { type } }));
+// 움직임 신호: 위치가 바뀐 거리가 step 이상 쌓일 때마다 'move' (방향키·터치·마우스로 실제로 움직였는지)
+let tutorialLast = null, tutorialDist = 0;
+function tutorialMoved(x, y, step) {
+  if (tutorialLast) { tutorialDist += Math.abs(x - tutorialLast[0]) + Math.abs(y - tutorialLast[1]); if (tutorialDist >= step) { tutorialDist = 0; tutorialSignal('move'); } }
+  tutorialLast = [x, y];
+}
 
 // 팩맨: 화면·입력·소리. 규칙(미로·팩맨·유령·모드·점수·목숨·레벨)은 logic.js (LOGIC_PACMAN) 에 있고,
 // 여기서는 규칙이 남긴 st.events 를 보고 소리·점수 글씨·안내창을 만든다.
@@ -367,6 +375,7 @@ addEventListener('keydown', (e) => {
   if (e.code in KEY_DIR) {
     e.preventDefault();
     L.steer(G, KEY_DIR[e.code]);
+    if (state === 'play') tutorialSignal('steer');
     return;
   }
   if (e.repeat) return;
@@ -390,6 +399,7 @@ document.addEventListener('pointermove', (e) => {
   const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
   if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_MIN) return;
   L.steer(G, Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : 3) : (dy < 0 ? 0 : 2));
+  if (state === 'play') tutorialSignal('steer');
   swipe = { x: e.clientX, y: e.clientY };
 });
 const endSwipe = () => { swipe = null; };
