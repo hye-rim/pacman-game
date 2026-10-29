@@ -19,8 +19,10 @@ const ctx = canvas.getContext('2d');
 const $ = (id) => document.getElementById(id);
 
 function fit() {
+  const pad = $('pad');
+  const padH = pad && getComputedStyle(pad).display !== 'none' ? pad.offsetHeight + 8 : 0;
   const hudH = 52;
-  const scale = Math.min((innerWidth - 16) / W, (innerHeight - 16 - hudH) / H);
+  const scale = Math.min((innerWidth - 16) / W, (innerHeight - 16 - hudH - padH) / H);
   const cssW = Math.floor(W * scale), cssH = Math.floor(H * scale);
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.style.width = cssW + 'px';
@@ -391,7 +393,7 @@ addEventListener('keydown', (e) => {
 let swipe = null;
 const SWIPE_MIN = 18;
 document.addEventListener('pointerdown', (e) => {
-  if (e.target.closest('button')) return;
+  if (e.target.closest('button') || e.target.closest('#pad')) return;
   swipe = { x: e.clientX, y: e.clientY };
 });
 document.addEventListener('pointermove', (e) => {
@@ -402,6 +404,26 @@ document.addEventListener('pointermove', (e) => {
   if (state === 'play') tutorialSignal('steer');
   swipe = { x: e.clientX, y: e.clientY };
 });
+// 방향 패드(폰): 누른 채 끌면 방향이 바뀐다. 팩맨은 한 번 정한 방향으로 계속 가니 방향이 바뀔 때만 알려 주면 된다
+const pad = $('pad');
+const PAD_DIRS = [0, 2, 1, 3];                  // 화면의 ▲ ▼ ◀ ▶ 가 가리키는 방향 (위 0 · 왼쪽 1 · 아래 2 · 오른쪽 3)
+let padNow = null;
+function padFrom(e) {
+  const r = pad.getBoundingClientRect();
+  const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+  const knob = pad.querySelector('b'), lim = r.width * 0.2;
+  knob.style.transform = `translate(${Math.max(-lim, Math.min(lim, dx))}px, ${Math.max(-lim, Math.min(lim, dy))}px)`;
+  const d = Math.max(Math.abs(dx), Math.abs(dy)) < r.width * 0.12 ? null : Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : 3) : (dy < 0 ? 0 : 2);
+  if (d === padNow) return;
+  padNow = d;
+  pad.querySelectorAll('i').forEach((el, i) => el.classList.toggle('on', d !== null && PAD_DIRS[i] === d));
+  if (d !== null) { L.steer(G, d); if (state === 'play') tutorialSignal('steer'); }
+}
+const padEnd = () => { padNow = null; pad.querySelector('b').style.transform = ''; pad.querySelectorAll('i').forEach((el) => el.classList.remove('on')); };
+pad.addEventListener('pointerdown', (e) => { e.preventDefault(); try { pad.setPointerCapture(e.pointerId); } catch (_) {} padFrom(e); });
+pad.addEventListener('pointermove', (e) => { if (e.buttons || e.pointerType === 'touch') padFrom(e); });
+pad.addEventListener('pointerup', padEnd);
+pad.addEventListener('pointercancel', padEnd);
 const endSwipe = () => { swipe = null; };
 document.addEventListener('pointerup', endSwipe);
 document.addEventListener('pointercancel', endSwipe);
